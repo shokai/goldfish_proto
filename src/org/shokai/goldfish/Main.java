@@ -18,6 +18,7 @@ public class Main extends Activity {
         setContentView(R.layout.main);
         trace("start");
         textViewTag = (TextView)findViewById(R.id.textViewTag);
+        textViewTag.setText("no TAG");
         resolveIntent(this.getIntent());
     }
 
@@ -36,9 +37,6 @@ public class Main extends Activity {
                 trace(e);
                 textViewTag.setText("TAG error");
             }
-        }
-        else{
-            textViewTag.setText("no TAG");
         }
     }
     
