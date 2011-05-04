@@ -3,5 +3,5 @@
 .DS_Store
 db/*
 db*
-bin/*
+*/bin/*
 *.lock
