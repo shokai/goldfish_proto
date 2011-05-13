@@ -1,6 +1,15 @@
 package org.shokai.goldfish;
 
-import java.lang.reflect.Field;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.apache.http.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.google.common.primitives.UnsignedBytes;
 
@@ -14,6 +23,7 @@ import android.widget.TextView;
 
 public class Main extends Activity {
     private TextView textViewTag;
+    private final String api_url = "http://192.168.1.38:8930";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {        
@@ -43,11 +53,26 @@ public class Main extends Activity {
                 String id = sb.toString();
                 textViewTag.setText("TAG : "+id);
                 trace(id);
+                this.post_nfctag(id);
             }
             catch(Exception e){
                 e.printStackTrace();
                 textViewTag.setText("TAG error");
             }
+        }
+    }
+    
+    public HttpResponse post_nfctag(String tag) throws Exception{
+        HttpClient client = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(this.api_url);
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", tag));
+        try{
+            httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+            return client.execute(httppost);
+        }
+        catch(Exception e){
+            throw e;
         }
     }
     
