@@ -97,17 +97,18 @@ public class Main extends Activity implements SensorEventListener {
                     res = api.post(tag_id, API.Action.PASTE);
                     this.api_alread_posted = true;
                     trace(res);
+                    finish();
                 }
                 else if (x < -4) { // left
                     res = api.post(tag_id, API.Action.COPY);
                     this.api_alread_posted = true;
                     trace(res);
-                }
-                if(Pattern.compile("^https?://.+").matcher(res).matches()){
-                    Uri uri = Uri.parse(res);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                    finish();
+                    this.textViewTag.setText(res);
+                    if(Pattern.compile("^https?://.+").matcher(res).matches()){
+                        Uri uri = Uri.parse(res);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
                 }
             }
             catch (Exception e) {
