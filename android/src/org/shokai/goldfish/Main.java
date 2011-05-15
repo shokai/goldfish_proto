@@ -5,11 +5,6 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import com.google.common.primitives.UnsignedBytes;
 
@@ -20,11 +15,14 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.*;
 import android.widget.TextView;
+import android.hardware.*;
 
-public class Main extends Activity {
+public class Main extends Activity implements SensorEventListener{
     private TextView textViewTag;
-    private final String api_url = "http://192.168.1.38:8930";
-    
+    private final String api_url = "http://10.0.1.5:8930";
+    private SensorManager sm;
+    private API api;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {        
         super.onCreate(savedInstanceState);
@@ -32,6 +30,8 @@ public class Main extends Activity {
         trace("start");
         textViewTag = (TextView)findViewById(R.id.textViewTag);
         textViewTag.setText("no TAG");
+        sm = (SensorManager) this.getSystemService(SENSOR_SERVICE);
+        api = new API(api_url);
         resolveIntent(this.getIntent());
     }
 
@@ -53,7 +53,7 @@ public class Main extends Activity {
                 String id = sb.toString();
                 textViewTag.setText("TAG : "+id);
                 trace(id);
-                this.post_nfctag(id);
+                api.post(id, API.Action.COPY);
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -62,22 +62,39 @@ public class Main extends Activity {
         }
     }
     
-    public HttpResponse post_nfctag(String tag) throws Exception{
-        HttpClient client = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(this.api_url);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("tag", tag));
-        try{
-            httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-            return client.execute(httppost);
-        }
-        catch(Exception e){
-            throw e;
-        }
-    }
-    
     void trace(Object message){
         Log.v("GoldFish", message.toString());
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if (sensors.size() > 0) {
+            Sensor sensor = sensors.get(0);
+            sm.registerListener(this, sensor,
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        sm.unregisterListener(this);
+        super.onStop();
+    }
+    
+
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            trace("onSensorChanged : " + event.sensor.getName() + " : " + 
+                    ",x:" + event.values[0] + 
+                    ", y:" + event.values[1] + 
+                    ", z:" + event.values[2]);
+        }
+    }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        trace("onAccuracyChanged : " + accuracy);
     }
     
 }
