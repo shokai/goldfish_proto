@@ -3,6 +3,7 @@ package org.shokai.goldfish;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.regex.*;
 
 import org.apache.http.*;
 
@@ -10,6 +11,7 @@ import com.google.common.primitives.UnsignedBytes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -90,14 +92,21 @@ public class Main extends Activity implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
             try {
+                String res = "";
                 if (x > 4) { // right
-                    api.post(tag_id, API.Action.PASTE);
+                    res = api.post(tag_id, API.Action.PASTE);
                     this.api_alread_posted = true;
-                    finish();
+                    trace(res);
                 }
                 else if (x < -4) { // left
-                    api.post(tag_id, API.Action.COPY);
+                    res = api.post(tag_id, API.Action.COPY);
                     this.api_alread_posted = true;
+                    trace(res);
+                }
+                if(Pattern.compile("^https?://.+").matcher(res).matches()){
+                    Uri uri = Uri.parse(res);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
                     finish();
                 }
             }

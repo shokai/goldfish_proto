@@ -1,6 +1,7 @@
 package org.shokai.goldfish;
 
 import java.util.*;
+import java.io.*;
 
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -25,7 +26,7 @@ public class API {
         this.api_url = api_url;
     }
     
-    public HttpResponse post(String tag, String action) throws Exception{
+    public String post(String tag, String action) throws Exception{
         HttpClient client = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(this.api_url);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -33,7 +34,10 @@ public class API {
         params.add(new BasicNameValuePair("action", action));
         try{
             httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-            return client.execute(httppost);
+            HttpResponse res = client.execute(httppost);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            res.getEntity().writeTo(os);
+            return os.toString();
         }
         catch(Exception e){
             throw e;
