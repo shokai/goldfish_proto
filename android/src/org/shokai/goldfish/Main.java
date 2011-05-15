@@ -17,18 +17,20 @@ import android.util.*;
 import android.widget.TextView;
 import android.hardware.*;
 
-public class Main extends Activity implements SensorEventListener{
+public class Main extends Activity implements SensorEventListener {
     private TextView textViewTag;
     private final String api_url = "http://10.0.1.5:8930";
     private SensorManager sm;
     private API api;
+    private String tag_id = null;
+    private boolean api_alread_posted = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {        
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         trace("start");
-        textViewTag = (TextView)findViewById(R.id.textViewTag);
+        textViewTag = (TextView) findViewById(R.id.textViewTag);
         textViewTag.setText("no TAG");
         sm = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         api = new API(api_url);
@@ -39,7 +41,7 @@ public class Main extends Activity implements SensorEventListener{
         String action = intent.getAction();
         trace(action);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            try{
+            try {
                 Parcelable tag = intent.getParcelableExtra("android.nfc.extra.TAG");
                 Field f = tag.getClass().getDeclaredField("mId");
                 f.setAccessible(true);
@@ -51,21 +53,21 @@ public class Main extends Activity implements SensorEventListener{
                     sb.append(hexString);
                 }
                 String id = sb.toString();
-                textViewTag.setText("TAG : "+id);
-                trace(id);
-                api.post(id, API.Action.COPY);
+                this.tag_id = id;
+                textViewTag.setText("TAG : " + tag_id);
+                trace(tag_id);
             }
-            catch(Exception e){
+            catch (Exception e) {
                 e.printStackTrace();
                 textViewTag.setText("TAG error");
             }
         }
     }
-    
-    void trace(Object message){
+
+    void trace(Object message) {
         Log.v("GoldFish", message.toString());
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -82,19 +84,31 @@ public class Main extends Activity implements SensorEventListener{
         sm.unregisterListener(this);
         super.onStop();
     }
-    
 
     public void onSensorChanged(SensorEvent event) {
+        if(this.api_alread_posted || this.tag_id == null) return;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            trace("onSensorChanged : " + event.sensor.getName() + " : " + 
-                    ",x:" + event.values[0] + 
-                    ", y:" + event.values[1] + 
-                    ", z:" + event.values[2]);
+            float x = event.values[0];
+            try {
+                if (x > 4) { // right
+                    api.post(tag_id, API.Action.PASTE);
+                    this.api_alread_posted = true;
+                    finish();
+                }
+                else if (x < -4) { // left
+                    api.post(tag_id, API.Action.COPY);
+                    this.api_alread_posted = true;
+                    finish();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         trace("onAccuracyChanged : " + accuracy);
     }
-    
+
 }
