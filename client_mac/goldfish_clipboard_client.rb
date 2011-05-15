@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'eventmachine'
 require 'ArgsParser'
+require 'json'
 
 parser = ArgsParser.parser
 parser.bind :server, :s, 'default - dev.shokai.org'
@@ -28,6 +29,7 @@ RECONNECT_INTERVAL = 5
 
 class GoldFishClient < EM::Connection
   def post_init
+    send_data({:tag => @@params[:tag]}.to_json)
     EM::defer do
       loop do
         clip = `pbpaste`
@@ -35,7 +37,10 @@ class GoldFishClient < EM::Connection
           if @clip != clip
             @clip = clip
             puts "send clipboard : #{@clip}"
-            send_data "#{@clip}"
+            send_data({
+                        :clip => @clip,
+                        :tag => @@params[:tag]
+                      }.to_json)
           end
         end
         sleep 1
@@ -47,7 +52,14 @@ class GoldFishClient < EM::Connection
     return if data.strip.size < 1
     data.gsub!(/'/,'\'')
     puts data
-    `echo '#{data}' | pbcopy`
+    begin
+      data = JSON.parse(data)
+    rescue => e
+      STDERR.puts e
+    end
+    if data['clip']
+      `echo '#{data['clip']}' | pbcopy`
+    end
   end
 
   def unbind

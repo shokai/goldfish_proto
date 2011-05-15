@@ -3,6 +3,8 @@ require 'rubygems'
 require 'eventmachine'
 require 'evma_httpserver'
 require 'ArgsParser'
+require 'uri'
+require 'json'
 
 parser = ArgsParser.parser
 
@@ -19,6 +21,7 @@ parser.bind :help, :h, 'show help'
 }
 
 @@channel = EM::Channel.new
+@@clips = Hash.new
 
 class MacServer < EM::Connection
   def post_init
@@ -26,14 +29,20 @@ class MacServer < EM::Connection
       send_data mes
     }
     puts "new mac <#{@sid}>"
-    @@channel.push "new mac <#{@sid}> connected\n"
   end
 
   def receive_data(data)
     puts data
     return if data.strip.size < 1
     puts "<#{@sid}> #{data}"
-    send_data "echo to <#{@sid}> : #{data}\n"
+    begin
+      data = JSON.parse(data)
+      if data['tag'] and data['clip']
+        @@clips[data['tag']] = data['clip']
+      end
+    rescue => e
+      STDERR.puts e
+    end
   end
 
   def unbind
@@ -51,11 +60,24 @@ class AndroidServer  < EventMachine::Connection
     puts Time.now
     puts "request_method : #{@http_request_method}"
     puts "path_info : #{@http_path_info}"
-    puts "query_str : #{@http_query_string}"
-    puts "post_content : #{@http_post_content}"
+    puts "query_str :"
+    p query = Hash[*(@http_query_string.to_s.split('&').map{|i|
+                            j = i.split('=')
+                            [j[0].to_sym, URI.decode(j[1])]
+                          }).flatten]
 
+    puts "post_content :"
+    p post_content = Hash[*(@http_post_content.to_s.split('&').map{|i|
+                              j = i.split('=')
+                              [j[0].to_sym, URI.decode(j[1])]
+                            }).flatten]
+    
+    
     res.status = 200
-    res.content = "android server"
+    res.content = ''
+    if post_content[:action] == 'copy'
+      res.content = @@clips[post_content[:tag]]
+    end
     res.send_response
   end
 end
