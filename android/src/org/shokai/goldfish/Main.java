@@ -96,14 +96,14 @@ public class Main extends Activity implements SensorEventListener {
             float z = event.values[2];
             try {
                 String res = "";
-                if (z > 9) { // paste
+                if (x > 4) { // paste
                     trace("paste");
                     res = api.post(tag_id, API.Action.PASTE);
                     this.api_alread_posted = true;
                     trace(res);
                     finish();
                 }
-                else if (z < -9) { // copy
+                else if (x < -4) { // copy
                     trace("copy");
                     res = api.post(tag_id, API.Action.COPY);
                     this.api_alread_posted = true;
