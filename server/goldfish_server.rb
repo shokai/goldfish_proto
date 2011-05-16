@@ -12,6 +12,11 @@ parser.comment :android_port, 'default - 8930'
 parser.bind :help, :h, 'show help'
 @@first, @@params = parser.parse(ARGV)
 
+if parser.has_option(:help)
+  puts parser.help
+  exit
+end
+
 {
   :mac_port => 8931,
   :android_port => 8930
