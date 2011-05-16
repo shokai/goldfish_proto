@@ -108,7 +108,7 @@ class AndroidServer  < EventMachine::Connection
     res.content = ''
     if post_content[:action] == 'copy'
       @@clipboard = @@clips[post_content[:tag]]
-      res.content = @@clipboard
+      res.content = @@clipboard.gsub(/[\r\n]+$/,'')
     elsif post_content[:action] == 'paste'
       puts post_content[:tag]
       p @@tags
