@@ -58,10 +58,9 @@ class GoldFishClient < EM::Connection
       STDERR.puts e
     end
     if data['clip']
+      `echo '#{data['clip']}' | pbcopy`
       if data['clip'] =~ /^https?:\/\/.+/
         `open '#{data['clip']}'`
-      else
-        `echo '#{data['clip']}' | pbcopy`
       end
     end
   end
