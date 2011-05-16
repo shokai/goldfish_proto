@@ -4,13 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<TextView android:text="TAG : 1a2b3c4d5e000"
-          android:id="@+id/textViewTag" 
-          android:textSize="23sp"
-          android:layout_width="wrap_content" 
-          android:layout_height="wrap_content" />
 <ImageView android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:src="@drawable/top"
-           android:id="@+id/imageViewTop" />
+           android:id="@+id/imageViewTop" android:layout_gravity="center"/>
+<TextView android:text="TAG : 1a2b3c4d5e000"
+          android:id="@+id/textViewTag" 
+          android:textSize="28sp"
+          android:layout_width="wrap_content" 
+          android:layout_height="wrap_content" android:layout_gravity="center"/>
 </LinearLayout>
