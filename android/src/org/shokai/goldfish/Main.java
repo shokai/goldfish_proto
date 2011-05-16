@@ -21,7 +21,7 @@ import android.hardware.*;
 
 public class Main extends Activity implements SensorEventListener {
     private TextView textViewTag;
-    private final String api_url = "http://10.0.1.5:8930";
+    private final String api_url = "http://192.168.1.38:8930";
     private SensorManager sm;
     private API api;
     private String tag_id = null;
@@ -91,15 +91,19 @@ public class Main extends Activity implements SensorEventListener {
         if(this.api_alread_posted || this.tag_id == null) return;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
             try {
                 String res = "";
-                if (x > 4) { // right
+                if (z > 9) { // paste
+                    trace("paste");
                     res = api.post(tag_id, API.Action.PASTE);
                     this.api_alread_posted = true;
                     trace(res);
                     finish();
                 }
-                else if (x < -4) { // left
+                else if (z < -9) { // copy
+                    trace("copy");
                     res = api.post(tag_id, API.Action.COPY);
                     this.api_alread_posted = true;
                     trace(res);
@@ -108,6 +112,7 @@ public class Main extends Activity implements SensorEventListener {
                         Uri uri = Uri.parse(res);
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
+                        finish();
                     }
                 }
             }
