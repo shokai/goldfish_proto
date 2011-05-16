@@ -29,7 +29,7 @@ RECONNECT_INTERVAL = 5
 
 class GoldFishClient < EM::Connection
   def post_init
-    send_data({:tag => @@params[:tag]}.to_json)
+    send_data({:tag => @@params[:tag]}.to_json+"\n")
     EM::defer do
       loop do
         clip = `pbpaste`
@@ -40,7 +40,7 @@ class GoldFishClient < EM::Connection
             send_data({
                         :clip => @clip,
                         :tag => @@params[:tag]
-                      }.to_json)
+                      }.to_json+"\n")
           end
         end
         sleep 1
