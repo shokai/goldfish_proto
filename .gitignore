@@ -3,7 +3,8 @@
 .DS_Store
 db/*
 db*
-*/bin/*
+bin
 *.lock
-android/build.xml
-android/local.properties
+build.xml
+local.properties
+*.keystore
