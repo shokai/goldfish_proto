@@ -19,9 +19,25 @@ parser.bind :help, :h, 'show help'
   @@params[k] = v unless @@params[k]
 }
 
-@@channel = EM::Channel.new
+class NamedChannel < EM::Channel
+  def id_push(id, *items)
+    items = items.dup
+    EM.schedule do
+      items.each{|i|
+        begin
+          @subs[id].call i
+        rescue => e
+          STDERR.puts e
+        end
+      }
+    end
+  end
+end
+
+@@channel = NamedChannel.new
 @@clips = Hash.new
 @@clipboard = ''
+@@tags = Hash.new
 
 class MacServer < EM::Connection
   def post_init
@@ -37,8 +53,11 @@ class MacServer < EM::Connection
     puts "<#{@sid}> #{data}"
     begin
       data = JSON.parse(data)
-      if data['tag'] and data['clip']
-        @@clips[data['tag']] = data['clip']
+      if data['tag']
+        @@tags[data['tag']] = @sid
+        if data['clip']
+          @@clips[data['tag']] = data['clip']
+        end
       end
     rescue => e
       STDERR.puts e
@@ -91,7 +110,12 @@ class AndroidServer  < EventMachine::Connection
       @@clipboard = @@clips[post_content[:tag]]
       res.content = @@clipboard
     elsif post_content[:action] == 'paste'
-      @@channel.push({:clip => @@clipboard}.to_json)
+      puts post_content[:tag]
+      p @@tags
+      @@channel.id_push(
+                        @@tags[post_content[:tag]],
+                        {:clip => @@clipboard}.to_json
+                        )
     end
     res.send_response
   end
