@@ -16,12 +16,15 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.*;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.hardware.*;
 
 public class Main extends Activity implements SensorEventListener {
     private TextView textViewTag;
-//    private final String api_url = "http://192.168.1.38:8930";
+    private ImageView imageViewTop;
+    // private final String api_url = "http://192.168.1.38:8930";
     private final String api_url = "http://dev.shokai.org:8930";
     private SensorManager sm;
     private API api;
@@ -35,6 +38,8 @@ public class Main extends Activity implements SensorEventListener {
         trace("start");
         textViewTag = (TextView) findViewById(R.id.textViewTag);
         textViewTag.setText("no TAG");
+        imageViewTop = (ImageView) findViewById(R.id.imageViewTop);
+        imageViewTop.setVisibility(View.INVISIBLE);
         sm = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         api = new API(api_url);
         resolveIntent(this.getIntent());
@@ -58,6 +63,7 @@ public class Main extends Activity implements SensorEventListener {
                 String id = sb.toString();
                 this.tag_id = id;
                 textViewTag.setText("TAG : " + tag_id);
+                imageViewTop.setVisibility(View.VISIBLE);
                 trace(tag_id);
             }
             catch (Exception e) {
