@@ -5,3 +5,5 @@ db/*
 db*
 */bin/*
 *.lock
+android/build.xml
+android/local.properties
