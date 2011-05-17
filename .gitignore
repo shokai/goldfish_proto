@@ -8,3 +8,6 @@ bin
 build.xml
 local.properties
 *.keystore
+*.pem
+.bundle
+config.yaml
