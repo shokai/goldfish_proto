@@ -56,12 +56,12 @@ class GoldFishClient < EM::Connection
     rescue => e
       STDERR.puts e
     end
-    if data['clip'] and data['clip'] != @clip
+    if data['clip']
       puts @clip = data['clip']
-      `echo '#{@clip}' | pbcopy`
       if @clip =~ /^https?:\/\/.+/
         `open '#{@clip}'`
       end
+      `echo '#{@clip}' | pbcopy`
     end
   end
 
