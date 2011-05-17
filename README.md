@@ -19,7 +19,7 @@ use Eclipse, or
     % adb install -r bin/GoldFish.apk
 
 
-run mac client
+run Mac client
 --------------
 
     % ruby client_mac/goldfish_clipboard_client.rb --help
@@ -33,7 +33,19 @@ run server
     % ruby server/goldfish_server.rb
 
 
-install firefox client
+install Firefox client
 ----------------------
 Drag and Drop client_firefox/goldfish.user.js to Firefox.
+
+
+
+install Chrome client
+---------------------
+make google chrome extension.
+
+    % cd client_chrome
+    % gem install crxmake
+    % rake
+
+Drag and Drop package/goldfish.crx to Chrome.
 

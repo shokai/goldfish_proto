@@ -1,0 +1,29 @@
+require 'rubygems'
+require 'crxmake'
+
+desc 'make chrome extension'
+task 'crxmake' do
+  pkg_dir = File.dirname(__FILE__)+'/package'
+  Dir.mkdir(pkg_dir) unless File.exists?(pkg_dir)
+  # create crx
+  CrxMake.make(
+               :ex_dir => "./src",
+               #:pkey   => "./src.pem",
+               :crx_output => "#{pkg_dir}/goldfish.crx",
+               :verbose => true,
+               :ignorefile => /\.swp/,
+               :ignoredir => /\.(?:svn|git|cvs)/
+               )
+  
+  # create zip for Google Extension Gallery
+  CrxMake.zip(
+              :ex_dir => "./src",
+              #:pkey   => "./src.pem",
+              :zip_output => "#{pkg_dir}/goldfish.zip",
+              :verbose => true,
+              :ignorefile => /\.swp/,
+              :ignoredir => /\.(?:svn|git|cvs)/
+              )
+end
+
+task :default => [:crxmake]

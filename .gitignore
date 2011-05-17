@@ -11,3 +11,4 @@ local.properties
 *.pem
 .bundle
 config.yaml
+package
