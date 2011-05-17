@@ -111,25 +111,36 @@ class AndroidServer  < EventMachine::Connection
 
     res.status = 200
     res.content = ''
-    if post_content[:action] == 'copy'
-      @@clipboard = @@clips[post_content[:tag]]
-      res.content = @@clipboard.gsub(/[\r\n]+$/,'')
-    elsif post_content[:action] == 'paste'
-      puts post_content[:tag]
-      p @@tags
-      @@channel.id_push(
-                        @@tags[post_content[:tag]],
-                        {:clip => @@clipboard}.to_json
-                        )
+    if @http_path_info == '/browser' # grease moneky, chrome extension
+      if post_content[:tag].to_s.size > 0 and post_content[:url].to_s.size > 0
+        @@clips[post_content[:tag]] = post_content[:url]
+        res.content = 'ok'
+      else
+        res.status = 400
+        res.content = 'params "tag" and "url" required.'
+      end
+    else
+      if post_content[:action] == 'copy'
+        @@clipboard = @@clips[post_content[:tag]]
+        res.content = @@clipboard.gsub(/[\r\n]+$/,'')
+      elsif post_content[:action] == 'paste'
+        puts post_content[:tag]
+        p @@tags
+        @@channel.id_push(
+                          @@tags[post_content[:tag]],
+                          {:clip => @@clipboard}.to_json
+                          )
+      end
     end
     res.send_response
+    p @@clips
   end
 end
 
 EM::run do
   puts "GoldFish server start"
-  puts "mac server - port:#{@@params[:mac_port].to_i} - HTTP"
+  puts "mac server - port:#{@@params[:mac_port].to_i} - TCP Socket"
   EM::start_server('0.0.0.0', @@params[:mac_port].to_i, MacServer)
-  puts "android server - port:#{@@params[:android_port].to_i} - TCP Socket"
+  puts "android server - port:#{@@params[:android_port].to_i} - HTTP"
   EM::start_server('0.0.0.0', @@params[:android_port].to_i, AndroidServer)
 end
