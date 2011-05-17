@@ -1,11 +1,8 @@
 package org.shokai.goldfish;
 
-import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.*;
-
-import org.apache.http.*;
 
 import com.google.common.primitives.UnsignedBytes;
 
@@ -37,7 +34,7 @@ public class Main extends Activity implements SensorEventListener {
         setContentView(R.layout.main);
         trace("start");
         textViewTag = (TextView) findViewById(R.id.textViewTag);
-        textViewTag.setText("no TAG");
+        textViewTag.setText("please touch NFC tag");
         imageViewTop = (ImageView) findViewById(R.id.imageViewTop);
         imageViewTop.setVisibility(View.INVISIBLE);
         sm = (SensorManager) this.getSystemService(SENSOR_SERVICE);
@@ -98,8 +95,6 @@ public class Main extends Activity implements SensorEventListener {
         if(this.api_alread_posted || this.tag_id == null) return;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
             try {
                 String res = "";
                 if (x > 4) { // paste
@@ -119,8 +114,8 @@ public class Main extends Activity implements SensorEventListener {
                         Uri uri = Uri.parse(res);
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
+                        finish();
                     }
-                    finish();
                 }
             }
             catch (Exception e) {
