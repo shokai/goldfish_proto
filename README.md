@@ -31,3 +31,9 @@ run server
 
     % ruby server/goldfish_server.rb --help
     % ruby server/goldfish_server.rb
+
+
+install firefox client
+----------------------
+Drag and Drop client_firefox/goldfish.user.js to Firefox.
+
