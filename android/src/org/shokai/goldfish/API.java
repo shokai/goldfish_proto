@@ -28,7 +28,7 @@ public class API {
     
     public String post(String tag, String action) throws Exception{
         HttpClient client = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(this.api_url);
+        HttpPost httppost = new HttpPost(this.api_url+"/android");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("tag", tag));
         params.add(new BasicNameValuePair("action", action));
