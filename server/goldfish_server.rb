@@ -99,10 +99,10 @@ class AndroidServer  < EventMachine::Connection
 
     puts "post_content :"
     begin
-    p post_content = Hash[*(@http_post_content.to_s.split('&').map{|i|
-                              j = i.split('=')
-                              [j[0].to_sym, URI.decode(j[1])]
-                            }).flatten]
+      p post_content = Hash[*(@http_post_content.to_s.split('&').map{|i|
+                                j = i.split('=')
+                                [j[0].to_sym, URI.decode(j[1])]
+                              }).flatten]
     rescue => e
       post_content = {}
       STDERR.puts e
