@@ -26,12 +26,33 @@ public class API {
         this.api_url = api_url;
     }
     
-    public String post(String tag, String action) throws Exception{
+    public String copy(String tag) throws Exception{
+        try{
+            return this.post(tag, Action.COPY, null);
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+    
+    public String paste(String tag, String clipboard) throws Exception{
+        try{
+            return this.post(tag, Action.PASTE, clipboard);
+        }
+        catch(Exception e){
+            throw e;
+        }
+    }
+    
+    public String post(String tag, String action, String clipboard) throws Exception{
         HttpClient client = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(this.api_url+"/android");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("tag", tag));
         params.add(new BasicNameValuePair("action", action));
+        if(action.equals(Action.PASTE)){
+            params.add(new BasicNameValuePair("clip", clipboard));
+        }
         try{
             httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
             HttpResponse res = client.execute(httppost);

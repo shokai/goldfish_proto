@@ -27,6 +27,7 @@ public class Main extends Activity implements SensorEventListener {
     private API api;
     private String tag_id = null;
     private boolean api_alread_posted = false;
+    private static String clipboard = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,14 +98,15 @@ public class Main extends Activity implements SensorEventListener {
                 String res = "";
                 if (x > 4) { // paste
                     trace("paste");
-                    res = api.post(tag_id, API.Action.PASTE);
+                    res = api.paste(tag_id, this.clipboard);
                     this.api_alread_posted = true;
                     trace(res);
                     finish();
                 }
                 else if (x < -4) { // copy
                     trace("copy");
-                    res = api.post(tag_id, API.Action.COPY);
+                    res = api.copy(tag_id);
+                    this.clipboard = res;
                     this.api_alread_posted = true;
                     trace(res);
                     this.textViewTag.setText(res);
