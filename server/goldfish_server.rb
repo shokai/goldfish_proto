@@ -41,7 +41,6 @@ end
 
 @@channel = NamedChannel.new
 @@clips = Hash.new
-@@clipboard = ''
 @@tags = Hash.new
 
 class MacServer < EM::Connection
@@ -121,14 +120,13 @@ class AndroidServer  < EventMachine::Connection
       end
     else
       if post_content[:action] == 'copy'
-        @@clipboard = @@clips[post_content[:tag]].to_s
-        res.content = @@clipboard.gsub(/[\r\n]+$/,'')
+        res.content = @@clips[post_content[:tag]].to_s.gsub(/[\r\n]+$/,'')
       elsif post_content[:action] == 'paste'
         puts post_content[:tag]
         p @@tags
         @@channel.id_push(
                           @@tags[post_content[:tag]],
-                          {:clip => @@clipboard}.to_json
+                          {:clip => post_content[:clip]}.to_json
                           )
       end
     end
