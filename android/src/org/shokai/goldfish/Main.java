@@ -36,7 +36,6 @@ public class Main extends Activity implements SensorEventListener {
         textViewTag = (TextView) findViewById(R.id.textViewTag);
         textViewTag.setText("please touch NFC tag");
         imageViewTop = (ImageView) findViewById(R.id.imageViewTop);
-        imageViewTop.setVisibility(View.INVISIBLE);
         sm = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         api = new API(api_url);
         resolveIntent(this.getIntent());
@@ -60,7 +59,6 @@ public class Main extends Activity implements SensorEventListener {
                 String id = sb.toString();
                 this.tag_id = id;
                 textViewTag.setText("TAG : " + tag_id);
-                imageViewTop.setVisibility(View.VISIBLE);
                 trace(tag_id);
             }
             catch (Exception e) {

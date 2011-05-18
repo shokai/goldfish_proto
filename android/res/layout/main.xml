@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#F9F9FF">
     <ScrollView android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,14 +15,15 @@
                 android:src="@drawable/top"
                 android:id="@+id/imageViewTop"
                 android:layout_gravity="center"
-                android:layout_marginTop="50sp"/>
+                android:layout_marginTop="0sp"/>
             <TextView android:text="TAG : 1a2b3c4d5e000"
                 android:id="@+id/textViewTag" 
+                android:textColor="#000000"
                 android:textSize="28sp"
                 android:layout_width="wrap_content" 
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center"
-		        android:layout_marginTop="10sp"/>
+		        android:layout_marginTop="0sp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
