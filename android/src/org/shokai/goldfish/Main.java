@@ -87,6 +87,7 @@ public class Main extends Activity implements SensorEventListener {
     @Override
     protected void onStop() {
         sm.unregisterListener(this);
+        finish();
         super.onStop();
     }
 
