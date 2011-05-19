@@ -118,12 +118,13 @@ class AndroidServer  < EventMachine::Connection
         res.status = 400
         res.content = 'params "tag" and "url" required.'
       end
-    else
+    elsif @http_path_info == '/android'
       if post_content[:action] == 'copy'
         res.content = @@clips[post_content[:tag]].to_s.gsub(/[\r\n]+$/,'')
       elsif post_content[:action] == 'paste'
         puts post_content[:tag]
         p @@tags
+        @@clips[post_content[:tag]] = post_content[:clip].to_s.gsub(/[\r\n]+$/,'')
         @@channel.id_push(
                           @@tags[post_content[:tag]],
                           {:clip => post_content[:clip]}.to_json
