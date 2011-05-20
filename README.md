@@ -35,7 +35,7 @@ run server
 
 install Firefox client
 ----------------------
-Drag and Drop client_firefox/goldfish.user.js to Firefox.
+Drag and Drop client_firefox/goldfish.user.js to Firefox. edit nfc_tag value.
 
 
 
@@ -46,6 +46,8 @@ make google chrome extension.
     % cd client_chrome
     % gem install crxmake
     % rake
+
+edit nfc_tag value in background.html.
 
 Drag and Drop package/goldfish.crx to Chrome.
 
